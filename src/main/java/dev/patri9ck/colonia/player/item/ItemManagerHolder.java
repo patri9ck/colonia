@@ -14,13 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.patri9ck.colonia.connection.jedis;
+package dev.patri9ck.colonia.player.item;
 
-import dev.patri9ck.colonia.connection.ConnectionConsumer;
-import lombok.NonNull;
-import redis.clients.jedis.Jedis;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface JedisConnectionConsumer<T> extends ConnectionConsumer<Jedis, T> {
+public class ItemManagerHolder {
 
-    T consume(@NonNull Jedis jedis);
+    private final Map<Class<?>, ItemManager<?, ?>> itemManagers = new HashMap<>();
+
+    public void addItemManager(ItemManager<?, ?> itemManager) {
+        itemManagers.put(itemManager.getItemTypeClass(), itemManager);
+    }
+
+    public <I extends Item, T extends ItemType> ItemManager<I, T> getItemManager(ItemType itemType) {
+        return (ItemManager<I, T>) itemManagers.get(itemType.getClass());
+    }
 }

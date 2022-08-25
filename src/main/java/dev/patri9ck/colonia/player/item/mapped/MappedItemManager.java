@@ -18,7 +18,6 @@ package dev.patri9ck.colonia.player.item.mapped;
 
 import dev.patri9ck.colonia.connection.sql.SqlConnectionManager;
 import dev.patri9ck.colonia.player.item.ItemManager;
-import lombok.NonNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -31,26 +30,23 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class MappedItemManager implements ItemManager {
+public class MappedItemManager implements ItemManager<MappedItem, MappedItemType> {
+
+    private static final String SAVE_SQL = "REPLACE INTO %s (%s) VALUES (%s)";
+    private static final String LOAD_SQL = "SELECT 1 FROM %s where uuid = ?";
 
     private final SqlConnectionManager sqlConnectionManager;
 
-    public MappedItemManager(@NonNull SqlConnectionManager sqlConnectionManager) {
+    public MappedItemManager(SqlConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
     }
 
-    public boolean save(@NonNull MappedItem mappedItem) {
+    @Override
+    public boolean save(MappedItem mappedItem) {
         return sqlConnectionManager.connection(connection -> {
             List<Field> fields = getFields(mappedItem);
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement("REPLACE INTO "
-                    + mappedItem.getMappedItemType().getTable()
-                    + " ("
-                    + getFormattedFieldNames(fields)
-                    + ") VALUES ("
-                    + getQuestionMarks(fields.size())
-                    + ")")) {
-
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(SAVE_SQL, mappedItem.getMappedItemType().getTable(), getFormattedNames(fields), getFormattedQuestionMarks(fields.size())))) {
                 for (int i = 0; i < fields.size(); i++) {
                     preparedStatement.setObject(i + 1, fields.get(i).get(mappedItem));
                 }
@@ -64,14 +60,14 @@ public class MappedItemManager implements ItemManager {
         }).orElse(false);
     }
 
-    @NonNull
-    public Optional<MappedItem> load(@NonNull UUID uuid, @NonNull MappedItemType mappedDataType) {
+    @Override
+    public Optional<MappedItem> load(UUID uuid, MappedItemType mappedItemType) {
         return sqlConnectionManager.connection(connection -> {
-            try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT 1 FROM " + mappedDataType.getTable() + " WHERE uuid = ?")) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(LOAD_SQL, mappedItemType.getTable()))) {
                 preparedStatement.setString(1, uuid.toString());
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    MappedItem mappedItem = mappedDataType.getType().getConstructor().newInstance();
+                    MappedItem mappedItem = mappedItemType.getItemClass().getConstructor().newInstance();
 
                     if (resultSet.next()) {
                         List<Field> fields = getFields(mappedItem);
@@ -93,6 +89,11 @@ public class MappedItemManager implements ItemManager {
         });
     }
 
+    @Override
+    public Class<MappedItemType> getItemTypeClass() {
+        return MappedItemType.class;
+    }
+
     private List<Field> getFields(MappedItem mappedItem) {
         List<Field> fields = new ArrayList<>();
 
@@ -109,11 +110,11 @@ public class MappedItemManager implements ItemManager {
         return fields;
     }
 
-    private String getFormattedFieldNames(List<Field> fields) {
+    private String getFormattedNames(List<Field> fields) {
         return fields.stream().map(this::getName).collect(Collectors.joining(", "));
     }
 
-    private String getQuestionMarks(int amount) {
+    private String getFormattedQuestionMarks(int amount) {
         return String.join(", ", Collections.nCopies(amount, "?"));
     }
 

@@ -19,21 +19,20 @@ package dev.patri9ck.colonia.player.item.mapped.item;
 import dev.patri9ck.colonia.player.item.mapped.MappedItem;
 import dev.patri9ck.colonia.player.item.mapped.MappedItemType;
 import dev.patri9ck.colonia.player.synchronization.PlayerData;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.Optional;
+import java.util.UUID;
 
-@NoArgsConstructor
 public class PlayerItem implements MappedItem {
 
-    @Getter
+    private UUID uuid;
     private String data;
 
-    public PlayerItem(@NonNull PlayerData playerData) {
+    public PlayerItem() {}
+
+    public PlayerItem(PlayerData playerData) {
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
 
         yamlConfiguration.set("data", playerData);
@@ -41,7 +40,6 @@ public class PlayerItem implements MappedItem {
         data = yamlConfiguration.saveToString();
     }
 
-    @NonNull
     public Optional<PlayerData> toPlayerData() {
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
 
@@ -56,9 +54,13 @@ public class PlayerItem implements MappedItem {
         return Optional.empty();
     }
 
-    @NonNull
     @Override
     public MappedItemType getMappedItemType() {
         return MappedItemType.PLAYER;
+    }
+
+    @Override
+    public UUID getUuid() {
+        return uuid;
     }
 }

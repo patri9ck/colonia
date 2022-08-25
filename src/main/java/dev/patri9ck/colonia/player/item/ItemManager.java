@@ -16,16 +16,14 @@
  */
 package dev.patri9ck.colonia.player.item;
 
-import dev.patri9ck.colonia.player.item.mapped.MappedItem;
-import dev.patri9ck.colonia.player.item.mapped.MappedItemType;
-import lombok.NonNull;
-
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ItemManager {
+public interface ItemManager<I extends Item, T extends ItemType> {
 
-    boolean save(@NonNull MappedItem mappedItem);
+    boolean save(I item);
 
-    Optional<MappedItem> load(@NonNull UUID uuid, @NonNull MappedItemType mappedDataType);
+    Optional<I> load(UUID uuid, T itemType);
+
+    Class<T> getItemTypeClass();
 }

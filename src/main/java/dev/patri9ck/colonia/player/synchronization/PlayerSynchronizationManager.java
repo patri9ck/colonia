@@ -16,7 +16,8 @@
  */
 package dev.patri9ck.colonia.player.synchronization;
 
-import lombok.NonNull;
+import dev.patri9ck.colonia.connection.jedis.JedisConnectionManager;
+import dev.patri9ck.colonia.connection.sql.SqlConnectionManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -24,13 +25,16 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerSynchronizationManager implements Listener {
 
+    private SqlConnectionManager sqlConnectionManager;
+    private JedisConnectionManager jedisConnectionManager;
+
     @EventHandler
-    public void onPlayerJoin(@NonNull PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
 
     }
 
     @EventHandler
-    public void onPlayerQuit(@NonNull PlayerQuitEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
 
     }
 }

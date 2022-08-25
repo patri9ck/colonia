@@ -14,31 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.patri9ck.colonia.connection.sql;
+package dev.patri9ck.colonia.connection.jedis;
 
 import dev.patri9ck.colonia.connection.ConnectionConsumer;
 import dev.patri9ck.colonia.connection.ConnectionManager;
 import dev.patri9ck.colonia.connection.ConnectionRunnable;
-import org.mariadb.jdbc.MariaDbPoolDataSource;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Optional;
 
-public class SqlConnectionManager implements ConnectionManager<Connection> {
+public class JedisConnectionManager implements ConnectionManager<Jedis> {
 
-    private static final String SCHEME = "jdbc:mariadb://%s:%d/%s?user=%s&password=%s";
+    private final JedisPool pool;
 
-    private final MariaDbPoolDataSource pool;
-
-    public SqlConnectionManager(String host, int port, String database, String user, String password) throws SQLException {
-        pool = new MariaDbPoolDataSource(String.format(SCHEME, host, port, database, user, password));
+    public JedisConnectionManager(String host, int port, String user, String password) {
+        pool = new JedisPool(host, port, user, password);
     }
 
     @Override
-    public <T> Optional<T> connection(ConnectionConsumer<Connection, T> connectionConsumer) {
-        try (Connection connection = pool.getConnection()) {
-            return Optional.ofNullable(connectionConsumer.consume(connection));
+    public <T> Optional<T> connection(ConnectionConsumer<Jedis, T> connectionConsumer) {
+        try (Jedis jedis = pool.getResource()) {
+            return Optional.ofNullable(connectionConsumer.consume(jedis));
         } catch (Exception exception) {
             handleException(exception);
         }
@@ -47,9 +44,9 @@ public class SqlConnectionManager implements ConnectionManager<Connection> {
     }
 
     @Override
-    public void connection(ConnectionRunnable<Connection> connectionRunnable) {
-        try (Connection connection = pool.getConnection()) {
-            connectionRunnable.run(connection);
+    public void connection(ConnectionRunnable<Jedis> connectionRunnable) {
+        try (Jedis jedis = pool.getResource()) {
+            connectionRunnable.run(jedis);
         } catch (Exception exception) {
             handleException(exception);
         }

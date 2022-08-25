@@ -16,38 +16,55 @@
  */
 package dev.patri9ck.colonia.player;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import dev.patri9ck.colonia.player.item.Item;
+import dev.patri9ck.colonia.player.item.ItemManagerHolder;
 import dev.patri9ck.colonia.player.item.ItemType;
-import lombok.Getter;
-import lombok.NonNull;
-import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerProfile {
 
-    @NonNull
-    private final Map<ItemType, Item> items = new HashMap<>();
+    private static final long ITEM_EXPIRATION_MINUTES = 3;
+    private final ItemManagerHolder itemManagerHolder;
+    private final UUID uuid;
+    private final LoadingCache<ItemType, Item> items = CacheBuilder
+            .newBuilder()
+            .expireAfterWrite(ITEM_EXPIRATION_MINUTES, TimeUnit.MINUTES)
+            .build(new CacheLoader<>() {
+                @Override
+                public Item load(ItemType itemType) {
+                    return itemManagerHolder.getItemManager(itemType).load(uuid, itemType).get();
+                }
+            });
 
-    @NonNull
-    @Getter
-    private final Player player;
-
-    public PlayerProfile(@NonNull Player player) {
-        this.player = player;
+    public PlayerProfile(ItemManagerHolder itemManagerHolder, UUID uuid) {
+        this.itemManagerHolder = itemManagerHolder;
+        this.uuid = uuid;
     }
 
-    public Optional<Item> getData(@NonNull ItemType itemType) {
-        return Optional.of(items.get(itemType));
+    public UUID getUuid() {
+        return uuid;
     }
 
-    public void saveData(@NonNull ItemType itemType, @NonNull Item item) {
-        items.put(itemType, item);
+    public Optional<Item> getItem(ItemType itemType) {
+        try {
+            return Optional.of(items.get(itemType));
+        } catch (ExecutionException exception) {
+            return Optional.empty();
+        }
     }
 
-    public void removeData(@NonNull ItemType itemType) {
-        items.remove(itemType);
+    public boolean saveData(ItemType itemType, Item item) {
+        if (items.asMap().containsKey(itemType)) {
+            items.put(itemType, item);
+        }
+
+        return itemManagerHolder.getItemManager(itemType).save(item);
     }
 }

@@ -16,10 +16,9 @@
  */
 package dev.patri9ck.colonia.player.item.mapped;
 
-import lombok.NonNull;
+import dev.patri9ck.colonia.player.item.Item;
 
-public interface MappedItem {
+public interface MappedItem extends Item {
 
-    @NonNull
     MappedItemType getMappedItemType();
 }

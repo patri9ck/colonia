@@ -16,7 +16,6 @@
  */
 package dev.patri9ck.colonia.player.synchronization;
 
-import lombok.NonNull;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,7 +39,7 @@ public class PlayerData implements ConfigurationSerializable {
 
     private final Collection<PotionEffect> potionEffects;
 
-    public PlayerData(@NonNull Player player) {
+    public PlayerData(Player player) {
         health = player.getHealth();
         foodLevel = player.getFoodLevel();
         saturation = player.getSaturation();
@@ -50,7 +49,7 @@ public class PlayerData implements ConfigurationSerializable {
         inventory = player.getInventory().getContents();
     }
 
-    public PlayerData(@NonNull Map<String, Object> args) {
+    public PlayerData(Map<String, Object> args) {
         health = (double) args.get("health");
         foodLevel = (int) args.get("foodLevel");
         saturation = (double) args.get("saturation");
@@ -60,7 +59,7 @@ public class PlayerData implements ConfigurationSerializable {
         potionEffects = (Collection<PotionEffect>) args.get("potionEffects");
     }
 
-    public void apply(@NonNull Player player) {
+    public void apply(Player player) {
         player.setHealth(health);
         player.setFoodLevel(foodLevel);
         player.setSaturation((float) saturation);

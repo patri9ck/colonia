@@ -18,19 +18,25 @@ package dev.patri9ck.colonia.player.item.mapped.item;
 
 import dev.patri9ck.colonia.player.item.mapped.MappedItem;
 import dev.patri9ck.colonia.player.item.mapped.MappedItemType;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
-@NoArgsConstructor
+import java.util.UUID;
+
 public class EuroItem implements MappedItem {
 
-    @Getter
+    private UUID uuid;
     private long amount;
 
-    @NonNull
     @Override
     public MappedItemType getMappedItemType() {
         return MappedItemType.EURO;
+    }
+
+    @Override
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public long getAmount() {
+        return amount;
     }
 }

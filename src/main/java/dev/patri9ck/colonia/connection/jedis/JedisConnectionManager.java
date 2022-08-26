@@ -18,7 +18,7 @@ package dev.patri9ck.colonia.connection.jedis;
 
 import dev.patri9ck.colonia.connection.ConnectionConsumer;
 import dev.patri9ck.colonia.connection.ConnectionManager;
-import dev.patri9ck.colonia.connection.ConnectionRunnable;
+import dev.patri9ck.colonia.connection.ConnectionSupplier;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -33,7 +33,7 @@ public class JedisConnectionManager implements ConnectionManager<Jedis> {
     }
 
     @Override
-    public <T> Optional<T> connection(ConnectionConsumer<Jedis, T> connectionConsumer) {
+    public <T> Optional<T> consumeConnection(ConnectionConsumer<Jedis, T> connectionConsumer) {
         try (Jedis jedis = pool.getResource()) {
             return Optional.ofNullable(connectionConsumer.consume(jedis));
         } catch (Exception exception) {
@@ -44,9 +44,9 @@ public class JedisConnectionManager implements ConnectionManager<Jedis> {
     }
 
     @Override
-    public void connection(ConnectionRunnable<Jedis> connectionRunnable) {
+    public void supplyConnection(ConnectionSupplier<Jedis> connectionSupplier) {
         try (Jedis jedis = pool.getResource()) {
-            connectionRunnable.run(jedis);
+            connectionSupplier.run(jedis);
         } catch (Exception exception) {
             handleException(exception);
         }

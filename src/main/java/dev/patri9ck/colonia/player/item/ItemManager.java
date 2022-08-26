@@ -24,6 +24,4 @@ public interface ItemManager<I extends Item, T extends ItemType> {
     boolean save(I item);
 
     Optional<I> load(UUID uuid, T itemType);
-
-    Class<T> getItemTypeClass();
 }

@@ -16,11 +16,7 @@
  */
 package dev.patri9ck.colonia.connection;
 
-import java.util.Optional;
+public interface ConnectionSupplier<A extends AutoCloseable> {
 
-public interface ConnectionManager<A extends AutoCloseable> {
-
-    <T> Optional<T> consumeConnection(ConnectionConsumer<A, T> connectionConsumer);
-
-    void supplyConnection(ConnectionSupplier<A> connectionSupplier);
+    void run(A autoCloseable) throws Exception;
 }

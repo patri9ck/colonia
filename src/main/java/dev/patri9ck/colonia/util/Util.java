@@ -14,9 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.patri9ck.colonia.connection;
+package dev.patri9ck.colonia.util;
 
-public interface ConnectionRunnable<A extends AutoCloseable> {
+import java.util.concurrent.TimeUnit;
 
-    void run(A autoCloseable) throws Exception;
+public class Util {
+
+    private Util() {}
+
+    public static void sleep(long timeout, TimeUnit timeUnit) {
+        try {
+            timeUnit.sleep(timeout);
+        } catch (InterruptedException ignored) {}
+    }
 }

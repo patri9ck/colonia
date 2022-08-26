@@ -18,7 +18,7 @@ package dev.patri9ck.colonia.connection.sql;
 
 import dev.patri9ck.colonia.connection.ConnectionConsumer;
 import dev.patri9ck.colonia.connection.ConnectionManager;
-import dev.patri9ck.colonia.connection.ConnectionRunnable;
+import dev.patri9ck.colonia.connection.ConnectionSupplier;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public class SqlConnectionManager implements ConnectionManager<Connection> {
     }
 
     @Override
-    public <T> Optional<T> connection(ConnectionConsumer<Connection, T> connectionConsumer) {
+    public <T> Optional<T> consumeConnection(ConnectionConsumer<Connection, T> connectionConsumer) {
         try (Connection connection = pool.getConnection()) {
             return Optional.ofNullable(connectionConsumer.consume(connection));
         } catch (Exception exception) {
@@ -47,9 +47,9 @@ public class SqlConnectionManager implements ConnectionManager<Connection> {
     }
 
     @Override
-    public void connection(ConnectionRunnable<Connection> connectionRunnable) {
+    public void supplyConnection(ConnectionSupplier<Connection> connectionSupplier) {
         try (Connection connection = pool.getConnection()) {
-            connectionRunnable.run(connection);
+            connectionSupplier.run(connection);
         } catch (Exception exception) {
             handleException(exception);
         }

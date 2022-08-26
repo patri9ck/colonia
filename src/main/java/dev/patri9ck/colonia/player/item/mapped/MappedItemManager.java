@@ -43,7 +43,7 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
 
     @Override
     public boolean save(MappedItem mappedItem) {
-        return sqlConnectionManager.connection(connection -> {
+        return sqlConnectionManager.consumeConnection(connection -> {
             List<Field> fields = getFields(mappedItem);
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(SAVE_SQL, mappedItem.getMappedItemType().getTable(), getFormattedNames(fields), getFormattedQuestionMarks(fields.size())))) {
@@ -62,7 +62,7 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
 
     @Override
     public Optional<MappedItem> load(UUID uuid, MappedItemType mappedItemType) {
-        return sqlConnectionManager.connection(connection -> {
+        return sqlConnectionManager.consumeConnection(connection -> {
             try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(LOAD_SQL, mappedItemType.getTable()))) {
                 preparedStatement.setString(1, uuid.toString());
 
@@ -87,11 +87,6 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
 
             return null;
         });
-    }
-
-    @Override
-    public Class<MappedItemType> getItemTypeClass() {
-        return MappedItemType.class;
     }
 
     private List<Field> getFields(MappedItem mappedItem) {

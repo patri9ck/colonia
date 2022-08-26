@@ -20,8 +20,10 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import dev.patri9ck.colonia.player.item.Item;
+import dev.patri9ck.colonia.player.item.ItemManager;
 import dev.patri9ck.colonia.player.item.ItemManagerHolder;
 import dev.patri9ck.colonia.player.item.ItemType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -31,15 +33,17 @@ import java.util.concurrent.TimeUnit;
 public class PlayerProfile {
 
     private static final long ITEM_EXPIRATION_MINUTES = 3;
+
     private final ItemManagerHolder itemManagerHolder;
     private final UUID uuid;
+
     private final LoadingCache<ItemType, Item> items = CacheBuilder
             .newBuilder()
             .expireAfterWrite(ITEM_EXPIRATION_MINUTES, TimeUnit.MINUTES)
             .build(new CacheLoader<>() {
                 @Override
-                public Item load(ItemType itemType) {
-                    return itemManagerHolder.getItemManager(itemType).load(uuid, itemType).get();
+                public @NotNull Item load(@NotNull ItemType itemType) {
+                    return itemManagerHolder.getItemManager(itemType).flatMap(itemManager -> itemManager.load(uuid, itemType)).orElseThrow();
                 }
             });
 
@@ -52,19 +56,27 @@ public class PlayerProfile {
         return uuid;
     }
 
+    public boolean saveItem(ItemType itemType, Item item) {
+        if (items.asMap().containsKey(itemType)) {
+            items.put(itemType, item);
+        }
+
+        Optional<ItemManager<Item, ItemType>> itemManager = itemManagerHolder.getItemManager(itemType);
+
+        if (itemManager.isEmpty()) {
+            return false;
+        }
+
+        itemManager.get().save(item);
+
+        return true;
+    }
+
     public Optional<Item> getItem(ItemType itemType) {
         try {
             return Optional.of(items.get(itemType));
         } catch (ExecutionException exception) {
             return Optional.empty();
         }
-    }
-
-    public boolean saveData(ItemType itemType, Item item) {
-        if (items.asMap().containsKey(itemType)) {
-            items.put(itemType, item);
-        }
-
-        return itemManagerHolder.getItemManager(itemType).save(item);
     }
 }

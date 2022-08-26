@@ -16,18 +16,21 @@
  */
 package dev.patri9ck.colonia.player.item;
 
+import dev.patri9ck.colonia.player.item.mapped.MappedItemManager;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ItemManagerHolder {
 
-    private final Map<Class<?>, ItemManager<?, ?>> itemManagers = new HashMap<>();
+    private final Map<Class<? extends ItemType>, ItemManager<? extends Item, ? extends ItemType>> itemManagers = new HashMap<>();
 
-    public void addItemManager(ItemManager<?, ?> itemManager) {
-        itemManagers.put(itemManager.getItemTypeClass(), itemManager);
+    public void addItemManager(Class<? extends ItemType> itemTypeClass, ItemManager<? extends Item, ? extends ItemType> itemManager) {
+        itemManagers.put(itemTypeClass, itemManager);
     }
 
-    public <I extends Item, T extends ItemType> ItemManager<I, T> getItemManager(ItemType itemType) {
-        return (ItemManager<I, T>) itemManagers.get(itemType.getClass());
+    public Optional<ItemManager<Item, ItemType>> getItemManager(ItemType itemType) {
+        return Optional.ofNullable((ItemManager<Item, ItemType>)  itemManagers.get(itemType.getClass()));
     }
 }

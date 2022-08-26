@@ -41,9 +41,10 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
         this.sqlConnectionManager = sqlConnectionManager;
     }
 
+    // To-Do: Exception Handling
     @Override
-    public boolean save(MappedItem mappedItem) {
-        return sqlConnectionManager.consumeConnection(connection -> {
+    public void save(MappedItem mappedItem) {
+        sqlConnectionManager.supplyConnection(connection -> {
             List<Field> fields = getFields(mappedItem);
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(SAVE_SQL, mappedItem.getMappedItemType().getTable(), getFormattedNames(fields), getFormattedQuestionMarks(fields.size())))) {
@@ -51,13 +52,11 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
                     preparedStatement.setObject(i + 1, fields.get(i).get(mappedItem));
                 }
 
-                return preparedStatement.execute();
+                preparedStatement.execute();
             } catch (ReflectiveOperationException exception) {
                 exception.printStackTrace();
             }
-
-            return false;
-        }).orElse(false);
+        });
     }
 
     @Override

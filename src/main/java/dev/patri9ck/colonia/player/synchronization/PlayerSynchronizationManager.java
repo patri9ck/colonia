@@ -54,6 +54,7 @@ public class PlayerSynchronizationManager implements Listener {
         this.plugin = plugin;
     }
 
+    // To-Do: Exception Handling
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -81,6 +82,7 @@ public class PlayerSynchronizationManager implements Listener {
         });
     }
 
+    // To-Do: Exception Handling
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();Bukkit.getServer().getName();

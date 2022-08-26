@@ -56,20 +56,12 @@ public class PlayerProfile {
         return uuid;
     }
 
-    public boolean saveItem(ItemType itemType, Item item) {
+    public void saveItem(ItemType itemType, Item item) {
         if (items.asMap().containsKey(itemType)) {
             items.put(itemType, item);
         }
 
-        Optional<ItemManager<Item, ItemType>> itemManager = itemManagerHolder.getItemManager(itemType);
-
-        if (itemManager.isEmpty()) {
-            return false;
-        }
-
-        itemManager.get().save(item);
-
-        return true;
+        itemManagerHolder.getItemManager(itemType).ifPresent(itemManager -> itemManager.save(item));
     }
 
     public Optional<Item> getItem(ItemType itemType) {

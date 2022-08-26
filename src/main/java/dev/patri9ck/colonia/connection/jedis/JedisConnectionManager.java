@@ -52,6 +52,7 @@ public class JedisConnectionManager implements ConnectionManager<Jedis> {
         }
     }
 
+    // To-Do: Exception Handling
     private void handleException(Exception exception) {
         exception.printStackTrace();
     }

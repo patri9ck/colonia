@@ -17,13 +17,13 @@
 package dev.patri9ck.colonia.player.item.mapped;
 
 import dev.patri9ck.colonia.player.item.ItemType;
-import dev.patri9ck.colonia.player.item.mapped.item.EuroItem;
+import dev.patri9ck.colonia.player.item.mapped.item.MoneyItem;
 import dev.patri9ck.colonia.player.item.mapped.item.PlayerItem;
 import org.jetbrains.annotations.NotNull;
 
 public enum MappedItemType implements ItemType {
 
-    EURO("euro", EuroItem.class),
+    MONEY("money", MoneyItem.class),
     PLAYER("player", PlayerItem.class);
 
     private final String table;

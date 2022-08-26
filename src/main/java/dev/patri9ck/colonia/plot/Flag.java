@@ -14,29 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.patri9ck.colonia.player.item.mapped.item;
+package dev.patri9ck.colonia.plot;
 
-import dev.patri9ck.colonia.player.item.mapped.MappedItem;
-import dev.patri9ck.colonia.player.item.mapped.MappedItemType;
-
-import java.util.UUID;
-
-public class EuroItem implements MappedItem {
-
-    private UUID uuid;
-    private long amount;
-
-    @Override
-    public MappedItemType getMappedItemType() {
-        return MappedItemType.EURO;
-    }
-
-    @Override
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public long getAmount() {
-        return amount;
-    }
+public enum Flag {
 }

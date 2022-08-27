@@ -17,53 +17,74 @@
 package dev.patri9ck.colonia.plot;
 
 import dev.patri9ck.colonia.connection.sql.SqlConnectionManager;
+import dev.patri9ck.colonia.util.Util;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class PlotManager {
 
-    private static final String PLOTS_TABLE = "plots";
-    private static final String OWNED_PLOTS_TABLE = "owned_plots";
+    private static final String TABLE = "plots";
 
-    private static final String GET_PLOTS_SQL = "";
-    private static final String GET_OWNED_PLOTS_SQL = "";
-    private static final String GET_OWNED_PLOTS_PER_UUID_SQL = "";
-    private static final String ADD_PLOT_SQL = "";
-    private static final String REMOVE_PLOT_SQL = "";
+    private static final String LOAD_PLOTS_SQL = "SELECT * FROM %s WHERE server = ?";
+    private static final String LOAD_PLOTS_PER_UUID_SQL = "SELECT * FROM %s WHERE server = ? AND uuid = ?";
+    private static final String SAVE_PLOT_SQL = "REPLACE INTO %s (x, y) VALUES (%s)";
 
     private final SqlConnectionManager sqlConnectionManager;
+    private final String server;
 
-    public PlotManager(SqlConnectionManager sqlConnectionManager) {
+    public PlotManager(SqlConnectionManager sqlConnectionManager, String server) {
         this.sqlConnectionManager = sqlConnectionManager;
+        this.server = server;
     }
 
-    public List<Plot> getPlots() {
+    public List<Plot> loadPlots() {
+        return sqlConnectionManager.consumeConnection(connection -> {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(LOAD_PLOTS_SQL, TABLE))) {
+                preparedStatement.setString(1, server);
 
+                return parsePlots(preparedStatement.executeQuery());
+            }
+        }).orElse(new ArrayList<>());
     }
 
-    public List<OwnedPlot> getOwnedPlots() {
+    public List<Plot> loadPlots(UUID uuid) {
+        return sqlConnectionManager.consumeConnection(connection -> {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(LOAD_PLOTS_PER_UUID_SQL, TABLE))) {
+                preparedStatement.setString(1, server);
+                preparedStatement.setString(2, uuid.toString());
 
+                return parsePlots(preparedStatement.executeQuery());
+            }
+
+        }).orElse(new ArrayList<>());
     }
 
-    public List<OwnedPlot> getOwnedPlots(UUID uuid) {
+    public void savePlot(Plot plot) {
+        sqlConnectionManager.supplyConnection(connection -> {
 
+        });
     }
 
-    public void addPlot(Plot plot) {
+    private List<Plot> parsePlots(ResultSet resultSet) throws SQLException {
+        try (resultSet) {
+            List<Plot> plots = new ArrayList<>();
 
-    }
+            while (resultSet.next()) {
+                plots.add(new Plot(resultSet.getLong("id"),
+                        resultSet.getInt("x"),
+                        resultSet.getInt("y"),
+                        resultSet.getInt("height"),
+                        resultSet.getInt("depth"),
+                        resultSet.getDouble("price"),
+                        Util.parseUuid(resultSet.getString("uuid")).orElse(null)));
+            }
 
-    public void removePlot(Plot plot) {
-
-    }
-
-    public Optional<Plot> unclaimPlot(OwnedPlot ownedPlot) {
-
-    }
-
-    public Optional<OwnedPlot> claimPlot(Plot plot, UUID uuid) {
-
+            return plots;
+        }
     }
 }

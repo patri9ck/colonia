@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 
 public class MappedItemManager implements ItemManager<MappedItem, MappedItemType> {
 
-    private static final String SAVE_SQL = "REPLACE INTO %s (%s) VALUES (%s)";
-    private static final String LOAD_SQL = "SELECT 1 FROM %s where uuid = ?";
+    private static final String SAVE_ITEM_SQL = "REPLACE INTO %s (%s) VALUES (%s)";
+    private static final String LOAD_ITEM_SQL = "SELECT 1 FROM %s WHERE uuid = ?";
 
     private final SqlConnectionManager sqlConnectionManager;
 
@@ -43,26 +43,9 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
 
     // To-Do: Exception Handling
     @Override
-    public void save(MappedItem mappedItem) {
-        sqlConnectionManager.supplyConnection(connection -> {
-            List<Field> fields = getFields(mappedItem);
-
-            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(SAVE_SQL, mappedItem.getMappedItemType().getTable(), getFormattedNames(fields), getFormattedQuestionMarks(fields.size())))) {
-                for (int i = 0; i < fields.size(); i++) {
-                    preparedStatement.setObject(i + 1, fields.get(i).get(mappedItem));
-                }
-
-                preparedStatement.execute();
-            } catch (ReflectiveOperationException exception) {
-                exception.printStackTrace();
-            }
-        });
-    }
-
-    @Override
     public Optional<MappedItem> load(UUID uuid, MappedItemType mappedItemType) {
         return sqlConnectionManager.consumeConnection(connection -> {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(LOAD_SQL, mappedItemType.getTable()))) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(LOAD_ITEM_SQL, mappedItemType.getTable()))) {
                 preparedStatement.setString(1, uuid.toString());
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -85,6 +68,24 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
             }
 
             return null;
+        });
+    }
+
+    // To-Do: Exception Handling
+    @Override
+    public void save(MappedItem mappedItem) {
+        sqlConnectionManager.supplyConnection(connection -> {
+            List<Field> fields = getFields(mappedItem);
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(SAVE_ITEM_SQL, mappedItem.getMappedItemType().getTable(), getFormattedNames(fields), getFormattedQuestionMarks(fields.size())))) {
+                for (int i = 0; i < fields.size(); i++) {
+                    preparedStatement.setObject(i + 1, fields.get(i).get(mappedItem));
+                }
+
+                preparedStatement.execute();
+            } catch (ReflectiveOperationException exception) {
+                exception.printStackTrace();
+            }
         });
     }
 

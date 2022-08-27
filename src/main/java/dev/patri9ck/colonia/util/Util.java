@@ -16,6 +16,10 @@
  */
 package dev.patri9ck.colonia.util;
 
+import org.bukkit.Bukkit;
+
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Util {
@@ -26,5 +30,19 @@ public class Util {
         try {
             timeUnit.sleep(timeout);
         } catch (InterruptedException ignored) {}
+    }
+
+    public static void assertAsync() {
+        if (Bukkit.isPrimaryThread()) {
+            throw new RuntimeException("Must be run asynchronously!");
+        }
+    }
+
+    public static Optional<UUID> parseUuid(String uuid) {
+        try {
+            return Optional.of(UUID.fromString(uuid));
+        } catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
     }
 }

@@ -17,7 +17,9 @@
 package dev.patri9ck.colonia.player.item.mapped;
 
 import dev.patri9ck.colonia.connection.sql.SqlConnectionManager;
+import dev.patri9ck.colonia.player.item.Item;
 import dev.patri9ck.colonia.player.item.ItemManager;
+import dev.patri9ck.colonia.player.item.ItemType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -30,7 +32,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class MappedItemManager implements ItemManager<MappedItem, MappedItemType> {
+public class MappedItemManager implements ItemManager {
 
     private static final String SAVE_ITEM_SQL = "REPLACE INTO %s (%s) VALUES (%s)";
     private static final String LOAD_ITEM_SQL = "SELECT 1 FROM %s WHERE uuid = ?";
@@ -43,7 +45,11 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
 
     // To-Do: Exception Handling
     @Override
-    public Optional<MappedItem> load(UUID uuid, MappedItemType mappedItemType) {
+    public Optional<Item> load(UUID uuid, ItemType itemType) {
+        if (!(itemType instanceof MappedItemType mappedItemType)) {
+            return Optional.empty();
+        }
+
         return sqlConnectionManager.consumeConnection(connection -> {
             try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(LOAD_ITEM_SQL, mappedItemType.getTable()))) {
                 preparedStatement.setString(1, uuid.toString());
@@ -73,7 +79,11 @@ public class MappedItemManager implements ItemManager<MappedItem, MappedItemType
 
     // To-Do: Exception Handling
     @Override
-    public void save(MappedItem mappedItem) {
+    public void save(Item item) {
+        if (!(item instanceof MappedItem mappedItem)) {
+            return;
+        }
+
         sqlConnectionManager.supplyConnection(connection -> {
             List<Field> fields = getFields(mappedItem);
 

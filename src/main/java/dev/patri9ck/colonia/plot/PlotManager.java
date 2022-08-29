@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.patri9ck.colonia.player.item;
+package dev.patri9ck.colonia.plot;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
-public interface ItemManager {
+public interface PlotManager {
 
-    void save(Item item);
+    List<Plot> load();
 
-    Optional<Item> load(UUID uuid, ItemType itemType);
+    List<Plot> load(UUID uuid);
+
+    void save(Plot plot);
 }

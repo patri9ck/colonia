@@ -22,13 +22,13 @@ import java.util.Optional;
 
 public class ItemManagerHolder {
 
-    private final Map<Class<? extends ItemType>, ItemManager<? extends Item, ? extends ItemType>> itemManagers = new HashMap<>();
+    private final Map<Class<? extends ItemType>, ItemManager> itemManagers = new HashMap<>();
 
-    public void addItemManager(Class<? extends ItemType> itemTypeClass, ItemManager<? extends Item, ? extends ItemType> itemManager) {
+    public void addItemManager(Class<? extends ItemType> itemTypeClass, ItemManager itemManager) {
         itemManagers.put(itemTypeClass, itemManager);
     }
 
-    public Optional<ItemManager<Item, ItemType>> getItemManager(ItemType itemType) {
-        return Optional.ofNullable((ItemManager<Item, ItemType>)  itemManagers.get(itemType.getClass()));
+    public Optional<ItemManager> getItemManager(ItemType itemType) {
+        return Optional.ofNullable(itemManagers.get(itemType.getClass()));
     }
 }

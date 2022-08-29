@@ -39,7 +39,8 @@ public class Shop extends Plot {
 
     @Override
     public void unclaim() {
-        setUuid(null);
+        super.unclaim();
+
         setExpiration(null);
     }
 

@@ -16,44 +16,36 @@
  */
 package dev.patri9ck.colonia.plot;
 
-import dev.patri9ck.colonia.Colonia;
+import org.bukkit.util.Vector;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
-public class Plot {
+public abstract class Plot {
 
     public static final long NOT_SAVED_ID = -1L;
 
     private long id;
-    private int x;
-    private int y;
-    private int height;
-    private int depth;
-    private double price;
+    private Vector first;
+    private Vector second;
     private UUID uuid;
 
-    private final Set<UUID> members = new HashSet<>();
-    private final Set<Flag> flags = new HashSet<>();
+    private final String server;
 
-    protected Plot(long id, int x, int y, int height, int depth, double price, UUID uuid) {
+    protected Plot(long id, Vector first, Vector second, UUID uuid, String server) {
         this.id = id;
-        this.x = x;
-        this.y= y;
-        this.height = height;
-        this.depth = depth;
-        this.price = price;
+        this.first = first;
+        this.second = second;
         this.uuid = uuid;
+        this.server = server;
     }
 
-    public static Plot newPlot(int x, int y, int height, int depth, double price) {
-        return new Plot(NOT_SAVED_ID, x, y, height, depth, price, null);
+    public void unclaim() {
+        setUuid(null);
     }
 
-    public static Plot newOwnedPlot(int x, int y, int height, int depth, double price, UUID uuid, String server) {
-        return new Plot(NOT_SAVED_ID, x, y, height, depth, price, uuid);
+    public boolean isClaimed() {
+        return uuid != null;
     }
 
     public long getId() {
@@ -64,44 +56,20 @@ public class Plot {
         this.id = id;
     }
 
-    public int getX() {
-        return x;
+    public Vector getFirst() {
+        return first;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setFirst(Vector first) {
+        this.first = first;
     }
 
-    public int getY() {
-        return y;
+    public Vector getSecond() {
+        return second;
     }
 
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getDepth() {
-        return depth;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
+    public void setSecond(Vector second) {
+        this.second = second;
     }
 
     public Optional<UUID> getUuid() {
@@ -112,11 +80,7 @@ public class Plot {
         this.uuid = uuid;
     }
 
-    public Set<UUID> getMembers() {
-        return members;
-    }
-
-    public Set<Flag> getFlags() {
-        return flags;
+    public String getServer() {
+        return server;
     }
 }

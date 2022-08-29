@@ -34,7 +34,6 @@ public enum MappedItemType implements ItemType {
         this.itemClass = itemClass;
     }
 
-    @Override
     public String getTable() {
         return table;
     }

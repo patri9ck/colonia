@@ -16,7 +16,4 @@
  */
 package dev.patri9ck.colonia.player.item;
 
-public interface ItemType {
-
-    String getTable();
-}
+public interface ItemType {}

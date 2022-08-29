@@ -16,8 +16,6 @@
  */
 package dev.patri9ck.colonia.player.item;
 
-import dev.patri9ck.colonia.player.item.mapped.MappedItemManager;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

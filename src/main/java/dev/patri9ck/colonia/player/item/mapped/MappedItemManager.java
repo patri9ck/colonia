@@ -16,6 +16,7 @@
  */
 package dev.patri9ck.colonia.player.item.mapped;
 
+import com.google.common.base.CaseFormat;
 import dev.patri9ck.colonia.connection.sql.SqlConnectionManager;
 import dev.patri9ck.colonia.player.item.Item;
 import dev.patri9ck.colonia.player.item.ItemManager;
@@ -34,8 +35,8 @@ import java.util.stream.Collectors;
 
 public class MappedItemManager implements ItemManager {
 
-    private static final String SAVE_ITEM_SQL = "REPLACE INTO %s (%s) VALUES (%s)";
-    private static final String LOAD_ITEM_SQL = "SELECT 1 FROM %s WHERE uuid = ?";
+    private static final String REPLACE_ITEM_SQL = "REPLACE INTO %s (%s) VALUES (%s)";
+    private static final String LOAD_ITEM_SQL = "SELECT * FROM %s WHERE uuid = ?";
 
     private final SqlConnectionManager sqlConnectionManager;
 
@@ -87,7 +88,7 @@ public class MappedItemManager implements ItemManager {
         sqlConnectionManager.supplyConnection(connection -> {
             List<Field> fields = getFields(mappedItem);
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(SAVE_ITEM_SQL, mappedItem.getMappedItemType().getTable(), getFormattedNames(fields), getFormattedQuestionMarks(fields.size())))) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(REPLACE_ITEM_SQL, mappedItem.getMappedItemType().getTable(), getFormattedNames(fields), getFormattedQuestionMarks(fields.size())))) {
                 for (int i = 0; i < fields.size(); i++) {
                     preparedStatement.setObject(i + 1, fields.get(i).get(mappedItem));
                 }
@@ -124,6 +125,6 @@ public class MappedItemManager implements ItemManager {
     }
 
     private String getName(Field field) {
-        return field.getName().toLowerCase();
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, field.getName());
     }
 }

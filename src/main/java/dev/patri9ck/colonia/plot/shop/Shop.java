@@ -17,24 +17,24 @@
 package dev.patri9ck.colonia.plot.shop;
 
 import dev.patri9ck.colonia.plot.Plot;
-import org.bukkit.util.Vector;
+import org.bukkit.Location;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
 public class Shop extends Plot {
 
-    private Date expiration;
+    private Instant expiration;
 
-    public Shop(long id, Vector first, Vector second, UUID uuid, String server, Date expiration) {
+    public Shop(long id, Location first, Location second, UUID uuid, String server, Instant expiration) {
         super(id, first, second, uuid, server);
 
         this.expiration = expiration;
     }
 
-    public Shop(Vector first, Vector second, String server) {
-        this(Plot.NOT_SAVED_ID, first, second, null, server, null);
+    public Shop(Location first, Location second, String server) {
+        this(NONE_ID, first, second, null, server, null);
     }
 
     @Override
@@ -44,16 +44,16 @@ public class Shop extends Plot {
         setExpiration(null);
     }
 
-    public void claim(UUID uuid, Date expiration) {
+    public void claim(UUID uuid, Instant expiration) {
         setUuid(uuid);
         setExpiration(expiration);
     }
 
-    public Optional<Date> getExpiration() {
+    public Optional<Instant> getExpiration() {
         return Optional.ofNullable(expiration);
     }
 
-    public void setExpiration(Date expiration) {
+    public void setExpiration(Instant expiration) {
         this.expiration = expiration;
     }
 }

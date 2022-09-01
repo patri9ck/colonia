@@ -100,7 +100,6 @@ public class PlayerSynchronizationManager implements Listener {
                jedisConnectionManager.supplyConnection(jedis -> jedis.del(getPlayerKey(uuid)));
             });
         }
-
     }
 
     private String getPlayerKey(UUID uuid) {

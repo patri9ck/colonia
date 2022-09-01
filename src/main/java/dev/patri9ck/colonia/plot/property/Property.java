@@ -17,7 +17,7 @@
 package dev.patri9ck.colonia.plot.property;
 
 import dev.patri9ck.colonia.plot.Plot;
-import org.bukkit.util.Vector;
+import org.bukkit.Location;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,18 +26,19 @@ import java.util.UUID;
 public class Property extends Plot {
 
     private double price;
+    private Set<Flag> flags;
+    private Set<UUID> members;
 
-    private final Set<Flag> flags = new HashSet<>();
-    private final Set<UUID> members = new HashSet<>();
-
-    public Property(long id, Vector first, Vector second, UUID uuid, String server, double price) {
+    public Property(long id, Location first, Location second, UUID uuid, String server, double price, Set<Flag> flags, Set<UUID> members) {
         super(id, first, second, uuid, server);
 
         this.price = price;
+        this.flags = flags;
+        this.members = members;
     }
 
-    public Property(Vector first, Vector second, String server, double price) {
-        this(Plot.NOT_SAVED_ID, first, second, null, server, price);
+    public Property(Location first, Location second, String server, double price) {
+        this(NONE_ID, first, second, null, server, price, new HashSet<>(), new HashSet<>());
     }
 
     public void claim(UUID uuid) {
@@ -56,9 +57,15 @@ public class Property extends Plot {
         return flags;
     }
 
+    public void setFlags(Set<Flag> flags) {
+        this.flags = flags;
+    }
+
     public Set<UUID> getMembers() {
         return members;
     }
 
-
+    public void setMembers(Set<UUID> members) {
+        this.members = members;
+    }
 }

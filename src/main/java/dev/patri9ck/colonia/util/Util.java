@@ -18,6 +18,7 @@ package dev.patri9ck.colonia.util;
 
 import org.bukkit.Bukkit;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +43,14 @@ public class Util {
         try {
             return Optional.of(UUID.fromString(uuid));
         } catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
+    }
+
+    public static <E extends Enum<E>> Optional<E> parseEnum(String name, Class<E> enumClass) {
+        try {
+            return Optional.of(enumClass.cast(enumClass.getDeclaredMethod("valueOf", String.class).invoke(null, name)));
+        } catch (ReflectiveOperationException exception) {
             return Optional.empty();
         }
     }

@@ -48,4 +48,8 @@ public class PlayerProfileManager {
 
         return playerProfile;
     }
+
+    public void removePlayerProfile(Player player) {
+        playerProfiles.remove(player.getUniqueId());
+    }
 }

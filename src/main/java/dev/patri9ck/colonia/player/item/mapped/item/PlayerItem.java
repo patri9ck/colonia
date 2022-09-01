@@ -63,8 +63,4 @@ public class PlayerItem implements MappedItem {
     public UUID getUuid() {
         return uuid;
     }
-
-    public String getData() {
-        return data;
-    }
 }

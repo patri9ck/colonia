@@ -16,23 +16,23 @@
  */
 package dev.patri9ck.colonia.plot;
 
-import org.bukkit.util.Vector;
+import org.bukkit.Location;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public abstract class Plot {
 
-    public static final long NOT_SAVED_ID = -1L;
+    public static final long NONE_ID = -1L;
 
     private long id;
-    private Vector first;
-    private Vector second;
+    private Location first;
+    private Location second;
     private UUID uuid;
 
     private final String server;
 
-    protected Plot(long id, Vector first, Vector second, UUID uuid, String server) {
+    protected Plot(long id, Location first, Location second, UUID uuid, String server) {
         this.id = id;
         this.first = first;
         this.second = second;
@@ -56,19 +56,19 @@ public abstract class Plot {
         this.id = id;
     }
 
-    public Vector getFirst() {
+    public Location getFirst() {
         return first;
     }
 
-    public void setFirst(Vector first) {
+    public void setFirst(Location first) {
         this.first = first;
     }
 
-    public Vector getSecond() {
+    public Location getSecond() {
         return second;
     }
 
-    public void setSecond(Vector second) {
+    public void setSecond(Location second) {
         this.second = second;
     }
 

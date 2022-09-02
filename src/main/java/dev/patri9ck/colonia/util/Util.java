@@ -49,7 +49,7 @@ public class Util {
     public static <E extends Enum<E>> Optional<E> parseEnum(String name, Class<E> enumClass) {
         try {
             return Optional.of(enumClass.cast(enumClass.getDeclaredMethod("valueOf", String.class).invoke(null, name)));
-        } catch (ReflectiveOperationException exception) {
+        } catch (ReflectiveOperationException | IllegalArgumentException exception) {
             return Optional.empty();
         }
     }

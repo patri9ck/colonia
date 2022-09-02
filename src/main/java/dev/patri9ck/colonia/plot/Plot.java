@@ -16,6 +16,8 @@
  */
 package dev.patri9ck.colonia.plot;
 
+import org.bukkit.entity.Player;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +35,14 @@ public abstract class Plot {
         this.uuid = uuid;
 
         this.server = server;
+    }
+
+    public boolean isOwner(Player player) {
+        return isOwner(player.getUniqueId());
+    }
+
+    public boolean isOwner(UUID uuid) {
+        return this.uuid.equals(uuid);
     }
 
     public void unclaim() {

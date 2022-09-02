@@ -14,11 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.patri9ck.colonia.plot.property;
+package dev.patri9ck.colonia.general;
 
-public enum Flag {
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
-    ENDER_PEARL,
-    CHORUS_FRUITS,
+public class GeneralListener implements Listener {
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        event.setCancelled(true);
+    }
+
 
 }

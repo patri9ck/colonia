@@ -18,6 +18,7 @@ package dev.patri9ck.colonia.plot.property;
 
 import dev.patri9ck.colonia.plot.Area;
 import dev.patri9ck.colonia.plot.Plot;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +40,14 @@ public class Property extends Plot {
 
     public Property(Area area, String server, double price) {
         this(NONE_ID, area, null, server, price, new HashSet<>(), new HashSet<>());
+    }
+
+    public boolean isMember(Player player) {
+        return isMember(player.getUniqueId());
+    }
+
+    public boolean isMember(UUID uuid) {
+        return members.contains(uuid);
     }
 
     public void claim(UUID uuid) {

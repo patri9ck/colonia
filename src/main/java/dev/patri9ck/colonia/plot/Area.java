@@ -19,8 +19,6 @@ package dev.patri9ck.colonia.plot;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.util.Objects;
-
 public class Area {
 
     private final World world;
@@ -104,31 +102,5 @@ public class Area {
 
     public int getSecondZ() {
         return secondZ;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-
-        Area area = (Area) object;
-
-        return world.getName().equals(area.world.getName())
-                && firstX == area.firstX
-                && firstY == area.firstY
-                && firstZ == area.firstZ
-                && secondX == area.secondX
-                && secondY == area.secondY
-                && secondZ == area.secondZ;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(world.getName(), firstX, firstY, firstZ, secondX, secondY, secondZ);
     }
 }

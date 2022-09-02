@@ -21,9 +21,9 @@ import java.util.UUID;
 
 public interface PlotManager {
 
-    List<Plot> load();
-
     List<Plot> load(UUID uuid);
+
+    List<Plot> load(String server);
 
     void save(Plot plot);
 }

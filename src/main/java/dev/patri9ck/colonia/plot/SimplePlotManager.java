@@ -31,6 +31,7 @@ public abstract class SimplePlotManager implements PlotManager {
 
     private static final String SELECT_PLOTS_SQL = "SELECT * FROM %s";
     private static final String SELECT_PLOTS_PER_USER_SQL = "SELECT * FROM %s WHERE uuid = ?";
+    private static final String SELECT_PLOTS_PER_SERVER_SQL = "SELECT * FROM %s WHERE server = ?";
     private static final String SELECT_PLOT_SQL = "SELECT * FROM %s WHERE id = ?";
 
     private final SqlConnectionManager sqlConnectionManager;
@@ -39,15 +40,6 @@ public abstract class SimplePlotManager implements PlotManager {
     protected SimplePlotManager(SqlConnectionManager sqlConnectionManager, String table) {
         this.sqlConnectionManager = sqlConnectionManager;
         this.table = table;
-    }
-
-    @Override
-    public List<Plot> load() {
-        return sqlConnectionManager.consumeConnection(connection -> {
-            try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(String.format(SELECT_PLOTS_SQL, table))) {
-                return parsePlots(resultSet);
-            }
-        }).orElse(new ArrayList<>());
     }
 
     @Override
@@ -62,6 +54,20 @@ public abstract class SimplePlotManager implements PlotManager {
             }
         }).orElse(new ArrayList<>());
     }
+
+    @Override
+    public List<Plot> load(String server) {
+        return sqlConnectionManager.consumeConnection(connection -> {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(SELECT_PLOTS_PER_SERVER_SQL, table))) {
+                preparedStatement.setString(1,server);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    return parsePlots(resultSet);
+                }
+            }
+        }).orElse(new ArrayList<>());
+    }
+
 
     protected abstract List<Plot> parsePlots(ResultSet resultSet) throws SQLException;
 

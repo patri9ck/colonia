@@ -85,7 +85,8 @@ public class PlayerSynchronizationManager implements Listener {
     // To-Do: Exception Handling
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();Bukkit.getServer().getName();
+        Player player = event.getPlayer();
+        Bukkit.getServer().getName();
 
         UUID uuid = player.getUniqueId();
 
@@ -95,9 +96,9 @@ public class PlayerSynchronizationManager implements Listener {
             PlayerData playerData = new PlayerData(player);
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-               playerProfileManager.getPlayerProfile(player).saveItem(MappedItemType.PLAYER, new PlayerItem(playerData));
+                playerProfileManager.getPlayerProfile(player).saveItem(MappedItemType.PLAYER, new PlayerItem(playerData));
 
-               jedisConnectionManager.supplyConnection(jedis -> jedis.del(getPlayerKey(uuid)));
+                jedisConnectionManager.supplyConnection(jedis -> jedis.del(getPlayerKey(uuid)));
             });
         }
     }

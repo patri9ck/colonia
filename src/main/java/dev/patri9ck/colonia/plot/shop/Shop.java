@@ -16,8 +16,8 @@
  */
 package dev.patri9ck.colonia.plot.shop;
 
+import dev.patri9ck.colonia.plot.Area;
 import dev.patri9ck.colonia.plot.Plot;
-import org.bukkit.Location;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -27,14 +27,14 @@ public class Shop extends Plot {
 
     private Instant expiration;
 
-    public Shop(long id, Location first, Location second, UUID uuid, String server, Instant expiration) {
-        super(id, first, second, uuid, server);
+    public Shop(long id, Area area, UUID uuid, String server, Instant expiration) {
+        super(id, area, uuid, server);
 
         this.expiration = expiration;
     }
 
-    public Shop(Location first, Location second, String server) {
-        this(NONE_ID, first, second, null, server, null);
+    public Shop(Area area, String server) {
+        this(NONE_ID, area, null, server, null);
     }
 
     @Override

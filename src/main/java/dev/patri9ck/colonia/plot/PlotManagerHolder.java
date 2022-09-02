@@ -14,33 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.patri9ck.colonia.player.item.mapped.item;
+package dev.patri9ck.colonia.plot;
 
-import dev.patri9ck.colonia.player.item.mapped.MappedItem;
-import dev.patri9ck.colonia.player.item.mapped.MappedItemType;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-import java.util.UUID;
+public class PlotManagerHolder {
 
-public class MoneyItem implements MappedItem {
+    private final Map<PlotType, PlotManager> plotManagers = new HashMap<>();
 
-    private UUID uuid;
-    private double amount;
-
-    @Override
-    public MappedItemType getMappedItemType() {
-        return MappedItemType.MONEY;
+    public void addPlotManager(PlotType plotType, PlotManager plotManager) {
+        plotManagers.put(plotType, plotManager);
     }
 
-    @Override
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public Optional<PlotManager> getPlotManager(PlotType plotType) {
+        return Optional.ofNullable(plotManagers.get(plotType));
     }
 }

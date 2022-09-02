@@ -16,27 +16,22 @@
  */
 package dev.patri9ck.colonia.plot;
 
-import org.bukkit.Location;
-
 import java.util.Optional;
 import java.util.UUID;
 
 public abstract class Plot {
 
     public static final long NONE_ID = -1L;
-
+    private final String server;
     private long id;
-    private Location first;
-    private Location second;
+    private Area area;
     private UUID uuid;
 
-    private final String server;
-
-    protected Plot(long id, Location first, Location second, UUID uuid, String server) {
+    protected Plot(long id, Area area, UUID uuid, String server) {
         this.id = id;
-        this.first = first;
-        this.second = second;
+        this.area = area;
         this.uuid = uuid;
+
         this.server = server;
     }
 
@@ -56,20 +51,12 @@ public abstract class Plot {
         this.id = id;
     }
 
-    public Location getFirst() {
-        return first;
+    public Area getArea() {
+        return area;
     }
 
-    public void setFirst(Location first) {
-        this.first = first;
-    }
-
-    public Location getSecond() {
-        return second;
-    }
-
-    public void setSecond(Location second) {
-        this.second = second;
+    public void setArea(Area area) {
+        this.area = area;
     }
 
     public Optional<UUID> getUuid() {

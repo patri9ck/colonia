@@ -20,11 +20,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import dev.patri9ck.colonia.player.item.Item;
-import dev.patri9ck.colonia.player.item.ItemManager;
 import dev.patri9ck.colonia.player.item.ItemManagerHolder;
 import dev.patri9ck.colonia.player.item.ItemType;
-import dev.patri9ck.colonia.player.item.mapped.MappedItem;
-import dev.patri9ck.colonia.player.item.mapped.MappedItemManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

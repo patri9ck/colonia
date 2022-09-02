@@ -16,8 +16,8 @@
  */
 package dev.patri9ck.colonia.plot.property;
 
+import dev.patri9ck.colonia.plot.Area;
 import dev.patri9ck.colonia.plot.Plot;
-import org.bukkit.Location;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,16 +29,16 @@ public class Property extends Plot {
     private Set<Flag> flags;
     private Set<UUID> members;
 
-    public Property(long id, Location first, Location second, UUID uuid, String server, double price, Set<Flag> flags, Set<UUID> members) {
-        super(id, first, second, uuid, server);
+    public Property(long id, Area area, UUID uuid, String server, double price, Set<Flag> flags, Set<UUID> members) {
+        super(id, area, uuid, server);
 
         this.price = price;
         this.flags = flags;
         this.members = members;
     }
 
-    public Property(Location first, Location second, String server, double price) {
-        this(NONE_ID, first, second, null, server, price, new HashSet<>(), new HashSet<>());
+    public Property(Area area, String server, double price) {
+        this(NONE_ID, area, null, server, price, new HashSet<>(), new HashSet<>());
     }
 
     public void claim(UUID uuid) {

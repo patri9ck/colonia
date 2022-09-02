@@ -17,11 +17,11 @@
 package dev.patri9ck.colonia.plot.property;
 
 import dev.patri9ck.colonia.connection.sql.SqlConnectionManager;
+import dev.patri9ck.colonia.plot.Area;
 import dev.patri9ck.colonia.plot.Plot;
 import dev.patri9ck.colonia.plot.SimplePlotManager;
 import dev.patri9ck.colonia.util.Util;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.sql.PreparedStatement;
@@ -36,12 +36,12 @@ import java.util.stream.Stream;
 
 public class PropertyPlotManager extends SimplePlotManager {
 
-    private static final String DELIMITER = " ,";
+    private static final String DELIMITER = ", ";
 
     private static final String TABLE = "properties";
 
-    private static final String INSERT_PROPERTY_SQL = "INSERT INTO %s (world, x1, y1, z1, x2, y2, z2, uuid, server, price, flags, members) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_PROPERTY_SQL = "UPDATE %s SET world = ?, x1 = ?, y1 = ?, z1 = ?, x2 = ?, y2 = ?, z2 = ?, uuid = ?, server = ?, price = ?, flags = ?, members = ? WHERE id = ?";
+    private static final String INSERT_PROPERTY_SQL = "INSERT INTO %s (world, first_x, first_y, first_z, second_x, second_y, second_z, uuid, server, price, flags, members) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String UPDATE_PROPERTY_SQL = "UPDATE %s SET world = ?, first_x = ?, first_y = ?, first_z = ?, second_x = ?, second_y = ?, second_z = ?, uuid = ?, server = ?, price = ?, flags = ?, members = ? WHERE id = ?";
 
     private final SqlConnectionManager sqlConnectionManager;
 
@@ -57,20 +57,19 @@ public class PropertyPlotManager extends SimplePlotManager {
             return;
         }
 
-        Location first = property.getFirst();
-        Location second = property.getSecond();
+        Area area = property.getArea();
 
         sqlConnectionManager.supplyConnection(connection -> {
             boolean exists = exists(connection, property);
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(exists ? UPDATE_PROPERTY_SQL : INSERT_PROPERTY_SQL, TABLE))) {
-                preparedStatement.setString(1, first.getWorld().getName());
-                preparedStatement.setInt(2, first.getBlockX());
-                preparedStatement.setInt(3, first.getBlockY());
-                preparedStatement.setInt(4, first.getBlockZ());
-                preparedStatement.setInt(5, second.getBlockX());
-                preparedStatement.setInt(6, second.getBlockY());
-                preparedStatement.setInt(7, second.getBlockZ());
+                preparedStatement.setString(1, area.getWorld().getName());
+                preparedStatement.setInt(2, area.getFirstX());
+                preparedStatement.setInt(3, area.getFirstY());
+                preparedStatement.setInt(4, area.getFirstZ());
+                preparedStatement.setInt(5, area.getSecondX());
+                preparedStatement.setInt(6, area.getSecondY());
+                preparedStatement.setInt(7, area.getSecondZ());
                 preparedStatement.setString(8, property.getUuid().map(UUID::toString).orElse(null));
                 preparedStatement.setString(9, property.getServer());
                 preparedStatement.setDouble(10, property.getPrice());
@@ -99,9 +98,12 @@ public class PropertyPlotManager extends SimplePlotManager {
         while (resultSet.next()) {
             World world = Bukkit.getWorld(resultSet.getString("world"));
 
+            if (world == null) {
+                continue;
+            }
+
             plots.add(new Property(resultSet.getLong("id"),
-                    new Location(world, resultSet.getInt("x1"), resultSet.getInt("y1"), resultSet.getInt("z1")),
-                    new Location(world, resultSet.getInt("x1"), resultSet.getInt("y1"), resultSet.getInt("z1")),
+                    new Area(world, resultSet.getInt("first_x"), resultSet.getInt("first_y"), resultSet.getInt("first_z"), resultSet.getInt("second_x"), resultSet.getInt("second_y"), resultSet.getInt("second_z")),
                     Util.parseUuid(resultSet.getString("uuid")).orElse(null),
                     resultSet.getString("server"),
                     resultSet.getDouble("price"),
